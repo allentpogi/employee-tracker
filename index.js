@@ -42,12 +42,11 @@ const mainQuestions = [
     },
 ];
 
-
+console.log('Welcome to the Employee Database Manager!');
 
 // Function to initialize app
 function init() {
-    // console.log('Welcome to the Employee Database Manager!');
-
+  console.clear()
     inquirer
       .prompt(mainQuestions)
       .then(answer => {
@@ -75,6 +74,7 @@ function init() {
 
 const viewDepartments = () => {
   db.query('SELECT * FROM department', function (err, results) {
+    console.clear()
     console.log("")
     console.log("------------------------------------------------------------------------")
     console.table(results);
@@ -84,7 +84,8 @@ const viewDepartments = () => {
 }
 
 const viewEmployees = () => {
-  db.query('SELECT employees.first_name, employees.last_name, department.department_name, roles.title, roles.salary, concat(m.first_name, " ", m.last_name) "manager" FROM employees JOIN department ON employees.department_id = department.id JOIN roles ON employees.role_id = roles.id JOIN employees m on employees.manager = m.id;' , function (err, results) {
+  db.query('SELECT employees.first_name, employees.last_name, department.department_name, roles.title, roles.salary, concat(m.first_name, " ", m.last_name) "manager" FROM employees JOIN department ON employees.department_id = department.id JOIN roles ON employees.role_id = roles.id LEFT OUTER JOIN employees m on employees.manager = m.id;' , function (err, results) {
+    console.clear()
     console.log("")
     console.log("--------------------------------------------------------------------------------------------------------------")
     console.table(results);
@@ -95,6 +96,7 @@ const viewEmployees = () => {
 
 const viewRoles = () => {
   db.query('SELECT roles.title, roles.salary, department.department_name FROM roles JOIN department ON roles.department_id = department.id;', function (err, results) {
+    console.clear()
     console.log("")
     console.log("------------------------------------------------------------------------")
     console.table(results);
