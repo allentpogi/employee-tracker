@@ -62,7 +62,13 @@ async function init() {
         case 'Add Department':
           addDepartment();
           break;
+        case 'Add Role':
+          addRole();
+          break;
+
+          
         case 'Quit':
+          console.clear()
           console.log('Exiting the application.');
           process.exit();
           break;
@@ -74,15 +80,18 @@ async function init() {
 
 
 const viewDepartments = async () => {
-  db.query('SELECT * FROM department', function (err, results) {
+  db.query('SELECT * FROM department', (err, results) => {
     console.clear()
     console.log("")
     console.log("------------------------------------------------------------------------")
-    console.table(results);
-    console.log("------------------------------------------------------------------------")
+    console.table(results)
+    console.log("------------------------------------------------------------------------");
   });
   init()
 }
+
+
+
 
 const viewEmployees = async () => {
   db.query('SELECT employees.first_name, employees.last_name, department.department_name, roles.title, roles.salary, concat(m.first_name, " ", m.last_name) "manager" FROM employees JOIN department ON employees.department_id = department.id JOIN roles ON employees.role_id = roles.id LEFT OUTER JOIN employees m on employees.manager = m.id;' , function (err, results) {
@@ -108,6 +117,7 @@ const viewRoles = async () => {
 
 
 const addDepartment = async () => {
+  console.clear()
   await inquirer
     .prompt([
       {
@@ -125,6 +135,49 @@ const addDepartment = async () => {
         console.log("Department added successfully.");
       });
     })
+  init()
+}
+
+const departmentChoices = async () => { 
+  const departments = db.query(`SELECT id AS value, department_name AS name FROM department;`, (err, results) => {
+    // console.log(results)
+    return results
+  });
+
+};
+
+
+
+const addRole = async () => {
+  console.clear()
+  await inquirer
+    .prompt([
+      {
+          name: "roleToadd",
+          type: "input",
+          message: "What is the name of the new role?"
+      },
+      {
+        name: "newRolesalary",
+        type: "input",
+        message: "How much is the salary of the new role?"
+      },
+      {
+        name: "newRoledepartment",
+        type: "list",
+        message: "What is the department of the new role?",
+        choices: [await departmentChoices()],
+      },
+    ])
+    // .then(answer => {
+    //   db.query(`INSERT INTO department (department_name) VALUES("` + answer.departmentToadd + '");', (err, result) => {
+    //     if (err) {
+    //       console.log(err);
+    //     }
+    //     console.clear()
+    //     console.log("Role added successfully.");
+    //   });
+    // })
   init()
 }
 
